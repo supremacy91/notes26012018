@@ -1,0 +1,14 @@
+core_config_data
+
+From any Block class that extends \Magento\Framework\View\Element\AbstractBlock
+$this->_scopeConfig->getValue('sectionName/groupName/fieldName');
+
+Any other PHP class:
+public function __construct( \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig ) {
+  $this->_scopeConfig = $scopeConfig;
+}
+
+Magento\Framework\App\Config\ScopeConfigInterface =>
+public function isSetFlag(...) - возвращает булево значение, если тип данных поля Yes/No
+
+--------------------------------------------------------------------------------------------------------------------------------------------

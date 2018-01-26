@@ -1,0 +1,3 @@
+https://magento.stackexchange.com/questions/150547/magento-2-how-to-create-a-custom-console-command
+
+php bin/magento calexis:product_check 7

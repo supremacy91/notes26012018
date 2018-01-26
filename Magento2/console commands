@@ -1,0 +1,44 @@
+Magento 2 console commands are based on symphony	
+
+посмотреть список команд
+php bin/magento
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+апгрейд Магенто приложения, базы данных и Shema
+php bin/magento setup:upgrade
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Создание нового пользователя в БД
+php bin/magento admin:user:create --admin-user="shab_admin" --admin-password="shab_admin123" --admin-email="dev.eugene.shab@gmail.com" --admin-firstname="Eugene" --admin-lastname="Shab"
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+    Set Unsecure URL
+    bin/magento setup:store-config:set --base-url="http://www.magento2.com/"
+
+    Set Secure URL
+    bin/magento setup:store-config:set --base-url-secure="https://www.magento2.com/"
+
+    Clear Cache
+    bin/magento cache:flush
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+clear, disable, enable cache 
+php bin/magento cache:clean
+php bin/magento cache:enable
+php bin/magento cache:disable
+
+enable and disable modules
+php bin/magento module:enable
+php bin/magento module:disable
+
+check indexer status, and reindex if needed
+php bin/magento indexer:info
+php bin/magento indexer:reindex
+
+компиляция файла
+php bin/magento setup:di:compile
+

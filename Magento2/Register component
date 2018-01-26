@@ -1,0 +1,32 @@
+Магенто компоненты:
+ -Модули
+ -Темы
+ -Языковые пакеты
+
+
+Все магенто компоненты должны быть зарегестрированы  в системе Магенто через класс ComponentRegistrar.
+В корневой директории каждого Магенто компонента должен быть файл registration.php. Его содержимое:
+
+Содержимое registration.php в зависимости от того, какой компонент мы подключаем:
+1) Модуль
+ ComponentRegistrar::register(ComponentRegistrar::MODULE, '<VendorName_ModuleName>', __DIR__);
+VendorName - имя неймспейса по аналогии с М1. oduleName - имя самого модуля.
+Do not use “Ui” for your custom module name because the %Vendor%_Ui notation, required when specifying paths, might cause issues.
+Example:
+use \Magento\Framework\Component\ComponentRegistrar;
+ComponentRegistrar::register(ComponentRegistrar::MODULE, 'Magento_AdminNotification', __DIR__);
+
+2)Темы
+ ComponentRegistrar::register(ComponentRegistrar::THEME, '<area>/<vendor>/<theme name>', __DIR__);
+where <area> is the functional area of the module (frontend, controller, and so on.), <vendor> is the name of the company providing the theme, and <theme name> is the name of the theme.
+Example:
+ComponentRegistrar::register(ComponentRegistrar::THEME, 'frontend/Magento/luma', __DIR__);
+
+3) Языковые пакеты
+ ComponentRegistrar::register(ComponentRegistrar::LANGUAGE, '<VendorName>_<packageName>', __DIR__);
+Example:
+ComponentRegistrar::register(ComponentRegistrar::LANGUAGE, 'magento_de_de', __DIR__);
+
+4) Библиотеки
+ ComponentRegistrar::register(ComponentRegistrar::LIBRARY, '<library name>', __DIR__
+

@@ -1,0 +1,13 @@
+You should not use the ObjectManager directly!
+
+Exception from the rule are:
+    in static magic methods like __wakeup, serialize, etc
+    in case you should make backward compatibility of constructor
+    in global scope, like in fixtures of integration test.
+    in class that needs only for creation of object like factory, proxy , etc
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+

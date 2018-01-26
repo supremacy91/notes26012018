@@ -1,0 +1,40 @@
+за статус Enabled модуля отвечает файл app/etc/config.php
+
+Dependencies are declared in the require field in Magento's composer.json file for each module. Conflicts are declared in the conflict field in modules' composer.json files. We use that information to build a dependency graph:
+
+    A->B means module A depends on module B.
+    A dependency chain is the path from a module to another one. For example, if module A depends on module B and module B depends on module C, then the dependency chain is A->B->C.
+
+команда, делающая модуль enable: php bin/magento --clear-static-content module:enable Training_Test
+
+1) Создаем каталог <vendor_name>/<module_name>. Для примера vendor_name =  Training; module_name = Test;
+
+2) обьявляем модуль сам модуль: app/code/Training/Test/etc/module.xml
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+	<module name="Training_Test" setup_version="2.0.0">
+	</module>
+</config>
+
+3) создаем app/code/Training/Test/registration.php 
+<?php
+\Magento\Framework\Component\ComponentRegistrar::register(
+\Magento\Framework\Component\ComponentRegistrar::MODULE,
+'Training_Test',
+__DIR__
+);
+
+4) Заносим информацию о модуле в файл app/etc/config.php, делая его enabled
+php bin/magento module:enable
+После выполнения этой команды М2 будет выдавать ошибку до выполнения команды php bin/magento setup:upgrade
+
+5) Устанавливаем  модули, находящиеся в config.php. Установленные модули хранятся в таблице setup_module
+php bin/magento setup:upgrade
+
+6) Layout, Templates:
+Они лежат в папке view, которая находится в корне модуля
+Example: app/code/Magento/Hello/view/frontend/layout
+Папки js css лежат в папке web, которая наряду с layout template
+ 
+

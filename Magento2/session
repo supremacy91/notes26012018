@@ -1,0 +1,3 @@
+ПОменять время сессии для аминки:
+задать напрямую значение в миллисекундах: таблица core_config_data path = 'admin/security/session_lifetime'
+

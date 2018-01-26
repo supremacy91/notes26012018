@@ -1,0 +1,309 @@
+1) Controllers: 
+dir 	<namespace>/<module>/Controller/<controller_name>/<controller_action>.php
+use	\Magento\Framawork\App\Action\Action - фронт
+use	\Magento\Backend\App\Action - бек
+
+Magento\Framework\App\FrontControllerInterface - здесь метод dispatch()
+работа с Layouts в контроллере: 
+$this-?>_view->loadLayout()
+$this-?>_view->renderLayout()
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2) Blocks: 
+dir	<namespace>/<module>/Block/
+use	\Magento\Framawork\View\Element\Template extends Magento\Framework\View\Element\AbstractBlock - здесь находится setTemplate()
+abstract class AbstractBlock extends \Magento\Framework\DataObject implements BlockInterface
+namespace_path	vendor/magento/View/Element/Template.php
+
+getUrl($route = '', $params = []) - находится в AbstractBlock;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3) Layouts:
+dir 	<namespace>/<module>/view/frontend/layout
+	<namespace>/<module>/view/adminhtml/layout
+
+core layout dir:
+vendor/magento/framework/View/Layout.php
+core layout class:
+Magento\Framework\View\Layout
+
+layout_name: <routerName>_<controllerName>_<actionName>.xml
+
+Example_layout_name: app\code\Magento\Hello\view\frontend\layout\hello_index_index.xml
+
+Example_layout_content:
+<page xmlns:xsi=”http://www.w3.org/2001/XMLSchema-instance”
+xsi:noNamespaceSchemaLocation=”../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd”>
+  <body>
+	<referenceContainer name=”content”>
+		<block class=”Magento\Hello\Block\Hello” name=”hello” template=”success.phtml”>
+		</block>
+	</referenceContainer>
+  </body>
+</page>
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4) Templates:
+dir 	<namespace>/<module>/view/frontend/templates
+	<namespace>/<module>/view/adminhtml/templates
+
+Magento\Framework\View\Element\Template extends Magento\Framework\View\Element\AbstractBlock - здесь находится setTemplate()
+abstract class AbstractBlock extends \Magento\Framework\DataObject implements BlockInterface
+
+
+Example_template_name	
+ app\code\Magento\Hello\view\frontend\templates\success.phtml
+Example_template_content
+ <?php echo „Successful! This is a simple module in Magento 2.0′; ?>
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5) JS CSS:
+dir 	<namespace>/<module>/view/frontend/web
+	<namespace>/<module>/view/adminhtml/web
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6)Routers:
+dir	<namespace>/<module>/etc/frontend/routes.xml
+	<namespace>/<module>/etc/adminhtml/routes.xml
+
+file_content_example 
+<config xmlns:xsi=”http://www.w3.org/2001/XMLSchema-instance”
+xsi:noNamespaceSchemaLocation=”../../../../../../lib/internal/Magento/Framework/App/etc/routes.xsd”>
+	<router id=”standard”>
+		<route id=”hello” frontName=”hello”>
+			<module name=”Magento_Hello” />
+		</route>
+	</router>
+</config>
+
+Base Router
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+7) Models: 
+use	Magento\Framework\Model\AbstractModel
+ protected function _construct()
+    {
+        $this->_init(\Pfay\Contacts\Model\ResourceModel\Contact::class); (example of : module resource class name)
+    }
+
+abstract class AbstractModel extends \Magento\Framework\DataObject
+class DataObject implements \ArrayAccess
+
+Resources:
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+ public function _construct()
+    {
+        $this->_init('pfay_contacts', 'pfay_contacts_id'); (example of : table name, primary key name)
+    }
+
+Collections:
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+ public function _construct()
+    {
+        $this->_init('Pfay\Contacts\Model\Contact', 'Pfay\Contacts\Model\ResourceModel\Contact'); (example of: Module model class name, module resource class name)
+    }
+
+
+EAV collections:
+Magento\Eav\Model\Entity\Collection\AbstractCollection
+extends
+Magento\Framework\Data\Collection\AbstractDb
+extends
+Magento\Framework\Data\Collection    - здесь методы load () getIterator() getItems() и тд
+implements 
+\IteratorAggregate, \Countable, ArrayInterface, CollectionDataSourceInterface
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Helper
+
+\Magento\Framework\App\Helper\AbstractHelper
+\Magento\Framework\App\Helper\Context
+
+  public function __construct(Context $context)
+    {
+        $this->_moduleManager = $context->getModuleManager();
+        $this->_logger = $context->getLogger();
+        $this->_request = $context->getRequest();
+        $this->_urlBuilder = $context->getUrlBuilder();
+        $this->_httpHeader = $context->getHttpHeader();
+        $this->_eventManager = $context->getEventManager();
+        $this->_remoteAddress = $context->getRemoteAddress();
+        $this->_cacheConfig = $context->getCacheConfig();
+        $this->urlEncoder = $context->getUrlEncoder();
+        $this->urlDecoder = $context->getUrlDecoder();
+        $this->scopeConfig = $context->getScopeConfig();
+    }
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ObjectManager
+
+Magento\Framework\App\ObjectManager 
+extends
+Magento\Framework\ObjectManager\ObjectManager
+extends
+\Magento\Framework\ObjectManagerInterface
+
+Example:
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); - возвращает обьект класса Magento\Framework\App\ObjectManager
+$product = $objectManager->create('Magento\Catalog\Model\Product')->load($id); создаем модель для продукта и грузим его по айдишнику из базы
+
+$product = $objectManager->create('...') - аналог getModel() из М1
+$product = $objectManager->get('...') - - аналог getSingleton() из М1
+
+
+Should not use Object manager directly!! like
+\Magento\Framework\App\ObjectManager::getInstance();
+but if you are working with event or plugins you have to use direct.
+but except that you should Inject Object Manager in Constructor first then you can use its object in your method
+
+Preferred to use : 
+1) desclare private object:
+private $_objectManager;
+2) inject in constructor and initialize :
+public function __construct(
+    \Magento\Framework\ObjectManagerInterface $objectmanager
+) 
+{
+    $this->_objectManager = $objectmanager;
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Observers 
+
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+
+class TestObserver implements ObserverInterface
+{
+    public function execute(Observer $observer)
+    {
+        die('test observer');
+    }
+}
+
+etc/events.xml
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="pfay_contacts_event_test">
+        <observer name="pfay_contacts_observer_test" instance="Pfay\Contacts\Observer\TestObserver" />
+    </event>
+</config>
+
+Magento\Framework\Event\ManagerInterface->dispatch('pfay_contacts_event_test');
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Object system (Dependency injection)
+Behind the scenes, the object manager will use PHP’s reflection features to look at a class’s __construct type hints/parameters, automatically instantiate the object for us, and then pass it into the constructor as an argument.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Регистр
+
+public function __construct(
+    \Magento\Framework\Registry $registry,
+)
+{
+    $this->registry     = $registry;
+
+}
+
+$this->registry->register('test_var', 'this is a test!');
+echo $this->registry->registry('test_var');
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Logger
+
+$writer = new \Zend\Log\Writer\Stream(BP . '/var/log/hour_cron.log');
+$this->_logger = new \Zend\Log\Logger();
+$this->_logger->addWriter($writer);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Sessions:
+
+    \Magento\Backend\Model\Session
+    \Magento\Catalog\Model\Session
+    \Magento\Checkout\Model\Session
+    \Magento\Customer\Model\Session
+    \Magento\Newsletter\Model\Session
+
+extends
+\Magento\Framework\Session\SessionManager
+implements
+SessionManagerInterface
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+themes
+http://devdocs.magento.com/guides/v2.0/frontend-dev-guide/themes/theme-general.html
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Ресурс
+
+$resource = ObjectManager::getInstance()->get(\Magento\Framework\App\ResourceConnection::class);
+$connection = $resource->getConnection();
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+\Magento\Store\Model\ScopeInterface::SCOPE_STORE
+
+Менеджер  обьектов, на котором создаем модели и коллекци
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$objectManager->create('Magento\Catalog\Model\ResourceModel\Product\Collection');
+
+
+получение и згрузка модели продукта:
+$objectManager->get('\Magento\Catalog\Model\Product')
+                    ->load($productId);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Exception:
+throw new \Magento\Framework\Exception\LocalizedException(__('message'));
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Большинство source моделей находятся в директориях:
+
+source models
+magento2_root/app/code/Magento/Config/Model/Config/Source 
+
+backend models
+magento2_root/app/code/Magento/Config/Model/Config/Backend.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+email programmatically
+https://webkul.com/blog/magento-2-send-transactional-email-programmatically-in-your-custom-module/
+http://mage-simplified.blogspot.com/2016/04/magento-2-send-custom-transactional.html
+https://jutesenthil.wordpress.com/2016/05/05/how-to-send-email-in-magento2/
+
+email templates:
+Admin->Marketing->Email Templates->Add new template
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+setup:di:compile
+
+1) Генерирует содержимое директории generation. В папке generation хранятся классы, которых нету в исходном коде(например, фабричные классы)
+
+
+setup:upgrade
+
+1) Появляется папка с кешем в var
+2) Устанавливает модули, добавляя их в setup_module
+
+

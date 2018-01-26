@@ -1,0 +1,62 @@
+https://www.pierrefay.com/magento2-training.html - tutorial
+https://www.smartiehastheanswer.co.uk/magento2/creating-a-custom-frontend-route-in-magento2.html - tutorial
+
+http://alanstorm.com/magento_2_mvvm_mvc/
+https://medium.com/@dannynimmo/how-to-use-the-repository-pattern-in-magento-2-4914caa67eaa
+http://www.mage-world.com/blog/how-to-use-model-and-collection-in-magento-2.html
+
+https://www.mageplaza.com/magento-2-module-development/create-system-xml-configuration-magento-2.html   !!
+https://www.mageplaza.com/magento-2-module-development/magento-2-layout-block-template.html
+
+https://www.magestore.com/magento-2-tutorial/magento-2-how-to-enable-layered-navigation/ - layered navigation
+	
+https://magento.stackexchange.com/questions/123920/magento-2-what-are-the-interceptors-file-in-var-generation - interceptors
+
+https://webkul.com/blog/magento2-code-generation-and-factory-design-pattern/ - factories
+
+rewriting
+
+http://inchoo.net/magento-2/overriding-classes-magento-2/            - overriding + plugins
+http://mageclass.com/screencast-how-to-change-core-functionality-in-magento2/  - overriding + plugins
+https://webkul.com/blog/magento2-use-plugins/			     - plugins
+
+https://www.classyllama.com/blog/template-override-m2                - override template
+
+https://alanstorm.com/magento_2_object_manager/                      - object manager
+https://alanstorm.com/magento2_dependency_injection_2015/            - dependency injection
+https://alanstorm.com/magento_2_object_manager_preferences/          - preferences
+https://alanstorm.com/magento_2_object_manager_argument_replacement/ - argument replacement
+
+https://www.mageplaza.com/kb/how-to-customize-email-template-transactional-email-magento-2.html  - email templates
+https://www.customerparadigm.com/how-to-create-edit-email-templates-magento2/ 			 - email templates
+http://excellencemagentoblog.com/blog/2011/11/25/magento-advanced-transactional-email-templates/ - email templates syntax
+https://gordonlesti.com/magento-2-email-template-logic-directives/ 				 - email templates syntax
+https://gordonlesti.com/magento-2-email-template-translator-directives/  			 - email templates syntax
+https://gordonlesti.com/magento-2-email-template-template-directives/ 				 - email templates syntax
+	
+https://www.hostknox.com/tutorials/magento 	- 	! MAGENTO TUTORIAL
+
+http://inchoo.net/magento-2/how-to-create-a-basic-module-in-magento-2/ - creating module
+https://www.mageplaza.com/magento-2-module-development/how-to-create-controllers-magento-2.html - creating module
+
+https://www.cloudways.com/blog/magento-2-layouts-blocks-templates/ - theming layout & temolates
+
+https://webkul.com/blog/create-ui-form-magento2-part-1/ 		      - UI Form
+https://firebearstudio.com/blog/magento-2-ui-components.html		      - UI Components
+	   - UI Components
+
+https://magenticians.com/magento-2-override-block/ - overriding block layout
+
+https://inviqa.com/blog/technical-guide-magento-2-checkout - checkout rendering
+
+https://inviqa.com/blog/using-setup-scripts-magento-2 							- install upgrade scripts
+https://www.mageplaza.com/magento-2-module-development/magento-2-how-to-create-sql-setup-script.html    - install upgrade scripts
+http://www.coolryan.com/magento/2016/02/09/installation-and-upgrade-scripts-in-magento-2/		- install upgrade scripts
+https://www.magevision.com/blog/post/install-or-upgrade-a-database-schema-magento-2/			- install upgrade scripts
+
+https://www.atwix.com/magento-2/adding-new-category-attributes/ 			- Adding new category attributes
+https://magento.stackexchange.com/questions/154665/add-select-attribute-to-category 	- Adding select category attribute
+
+http://bradfrost.com/blog/web/magento-static-blocks/					- static blocks M1
+https://code.tutsplus.com/tutorials/custom-widget-development-in-magento--cms-23015     - widgets M1
+

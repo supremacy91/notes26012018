@@ -1,0 +1,18 @@
+Clean static files cache
+
+1) System > Cache Management > Flush Static Files Cache.
+
+2) Можно вручную удалить кеш с директорий и поддиректорий:
+ -pub/static, не трогая pub/static/.htaccess
+ -var/view_preprocessed 
+
+3) Можно применить опциональный параметр --clear-static-content при применении следующих комманд:
+ -php bin/magento module:enable
+ -php bin/magento module:disable
+ -php bin/magento module:uninstall
+ -php bin/magento theme:uninstall
+Example : php bin/magento --clear-static-content module:enable
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+

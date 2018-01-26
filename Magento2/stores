@@ -1,0 +1,6 @@
+use Magento\Store\Model\StoreManagerInterface; - от него обьявляем storeManager
+
+$store = $this->storeManager->getStore(); - возьмет текущий стор
+$store = $this->storeManager->getStore(0); возьмет стор со значением store_id=0 по таблицу store
+$currentStore = $this->storeManager->setCurrentStore($store->getCode()); сетает текущий стор по полю code из таблцы store
+$storeId = $this->storeManager->getStore()->getId();

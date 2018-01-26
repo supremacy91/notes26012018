@@ -1,0 +1,178 @@
+http://inchoo.net/magento-2/overriding-classes-magento-2/            - overriding + plugins
+https://webkul.com/blog/magento2-use-plugins/			     - plugins
+
+https://www.classyllama.com/blog/template-override-m2                - override template
+
+https://alanstorm.com/magento_2_object_manager/                      - object manager
+https://alanstorm.com/magento2_dependency_injection_2015/            - dependency injection
+https://alanstorm.com/magento_2_object_manager_preferences/          - preferences
+https://alanstorm.com/magento_2_object_manager_argument_replacement/ - argument replacement
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+namespaces
+
+в М2 если мы просто пишем имя класса - то к нему омавляется автоматически текущий namespace.
+например Magento\Framework\App\ObjectManager::getInstance() - не сработает, будет попытка вызывть например Pulsestorm\TutorialObjectPreference\Command\Magento\Framework\App\ObjectManager
+надо ставить первый слеш: \Magento\Framework\App\ObjectManager::getInstance()
+
+------------------------------------------------------------------------------------------------------------------------------
+
+preference
+
+Указывает приоритетность классов для object manager. 
+for - тот класс, который мы перекрываем.
+type - тот класс, которым перекрываем и который будет загружен с помощью object manager. Это может быть как в методе класса во время dependency injection (при передачи в качестве параметра), а также при get () create() напрямую с object manager
+при создании класса напрямую через new никак не влияет.
+
+ <preference
+        for="Pulsestorm\TutorialObjectPreference\Model\MessageHolderInterface"
+        type="Pulsestorm\TutorialObjectPreference\Model\Spanish"
+ />
+
+В случае с фабриками - фабрикой также будет создан класс согласно правилам из preference:
+<preference for="Magento\CatalogInventory\Api\Data\StockItemInterface" type="Magento\CatalogInventory\Model\Stock\Item" />
+StockItemInterfaceFactory сгенерирует Item
+------------------------------------------------------------------------------------------------------------------------------
+
+arguments
+
+Для конкретного класса можно указать класс, который будет загружать object manager в консткрукторе класса в качестве параметра.
+На dependency injection в других методах никак не влияет - там уже играет роль preference.
+Если приоритет на инстанцирование одного и того е класса  задан через arguments и preference - то решающим будет arguments.
+
+<type name="Pulsestorm\TutorialObjectPreference\Model\Messenger">
+        <arguments>
+            <argument name="mhi" xsi:type="object">Pulsestorm\TutorialObjectPreference\Model\English</argument>
+        </arguments>
+</type>
+
+ <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="debug_hour_run" xsi:type="object">IntechSoft\CustomImport\Console\Command\DebugHour</item>
+            </argument>
+        </arguments>
+  </type>
+
+------------------------------------------------------------------------------------------------------------------------------
+
+  	       	PluginA 		PluginB 		PluginC
+sortOrder 	10 	       	 	20 	        	30
+before 		beforeDispatch() 	beforeDispatch() 	beforeDispatch()
+around 	  	                	aroundDispatch() 	aroundDispatch()
+after 		afterDispatch() 	afterDispatch() 	afterDispatch()
+
+The execution flow will be as follows:
+
+    PluginA::beforeDispatch()
+    PluginB::beforeDispatch()
+
+    PluginB::aroundDispatch() (Only the first half until callable is called)
+        PluginC::beforeDispatch()
+
+        PluginC::aroundDispatch() (Only the first half until callable is called)
+            Action::dispatch()
+        PluginC::aroundDispatch() (Only the second half after callable is called)
+        PluginC::afterDispatch()
+    PluginB::aroundDispatch() (Only the second half after callable is called)
+    PluginB::afterDispatch()
+    PluginA::afterDispatch()
+
+beforeDispatch():
+метод возвращает значения аргументов, котоыре будут переданы в метод dispatch(). Это может быть непосредственно сам метод, либо же результат запуска аргумента proceed() в aroundDispatch()
+Одним из результатов запуска аргумента proceed() может быть запуск обработки следующего по sortOrder плагина, куда мы передадим в качестве аргументов результат работы метода beforeDispatch().
+Если не указано возвращаемое значение - то мы просто не переопределяем переданные функции аргументы
+
+aroundDispatch():
+метод возвращает значение, которое будет возвращаемым значением для метода dispatch() в том случае, если не определен afterDispatch(). 
+Если определен afterDispatch(), то aroundDispatch() возвращает значение, которое будет передедано в afterDispatch() в качестве параметра и будет переопределено либо перевозвращено.  
+Если не указано возвращаемое значение - будет возвращено null.
+
+afterDispatch():
+метод переопределяет возвращаемое значение для метода dispatch().
+Если не указано возвращаемое значение - будет возвращено null.
+
+При наличии нескольких плагинов на один метод:
+ по сути при вызове proceed() в aroundDispatch() мы запускаем с нуля обработку следующего по sortOrder плагина результатом работы нашего proceed() будет возвращаемое значение вложенной обработки плагина с приоритетом  return в afterDispatch() > aroundDispatch(). Если же они во вложенном плагине не определены, то будет значение, возвращаемое конткнтом самого proceed() - то есть методомЮ для которого делается плагин либо соответсвенно результатом работы еще более вложенного плагина.
+
+
+plugins
+
+
+    <type name="Magento\Catalog\Api\Data\ProductInterface">
+        <plugin name="inchoo_catalog_product" type="Inchoo\Catalog\Plugin\Model\Product" />
+    </type>
+
+
+если в функцию переданы аргументы - то можно изменить эти передаваемые аргументы, задав их новое значение в массиве return
+class ProductPlugin
+{
+    public function beforeSetName(\Magento\Catalog\Model\Product $subject, $name)
+    {
+        return ['(' . $name . ')']; // теперь значение $name, передаваемое в метод-оригинал будет таким, каким оно возвращено здесь.
+    }
+}
+
+Interceptor classes are automatically generated to facilitate Magento’s plugin system. An interceptor class extends a type and is returned by the Object Manager to allow multiple plugin classes to inject logic into different methods. Interceptors work behind the scenes and are not directly referenced in application code.
+
+
+Interceptor генерируется в папке generation в каталоге, полное имя которого - полное имя класса, для которого создается Interceptor. 
+Например, если создан плагин для класса \Magento\ImportExport\Model\ResourceModel\Import\Data. Перед вызовом метода, который переккрыт плагином, будет создан Inteceptor:
+
+class Interceptor extends \Magento\ImportExport\Model\ResourceModel\Import\Data implements \Magento\Framework\Interception\InterceptorInterface
+{
+...
+}
+
+в этом классе будут реализованы все public методы класса-оригинала и его предков. Методы будут реализованы в таком формате на примере метода getNextBunch():
+public function getNextBunch()
+    {
+        $pluginInfo = $this->pluginList->getNext($this->subjectType, 'getNextBunch');
+        if (!$pluginInfo) {
+            return parent::getNextBunch();
+        } else {
+            return $this->___callPlugins('getNextBunch', func_get_args(), $pluginInfo);
+        }
+    }
+
+Magento\Framework\Interception\Interceptor.php - трейт, в котором реализация метода ___callPlugins()
+
+
+Options Magento 2 Interception plugin doesn’t work with:
+    Objects that are instantiated before Magento\Framework\Interception is bootstrapped
+    Final methods
+    Final classes
+    Any class that contains at least one final public method
+    Non-public methods
+    Class methods (such as static methods)
+    __construct
+    Virtual types
+
+У классов-Interceptor есть свойство pluginList
+pluginList->
+_data->
+имя класса, на который плагин делается (например, 'Magento\CatalogSearch\Model\Search\IndexBuilder')->
+имя плагина, которое указывается как Name в di.xml ->
+-sortOrder
+-instance(класс, в котором методы переопределяем)
+------------------------------------------------------------------------------------------------------------------------------
+
+виртуальные типы
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Catalog\Model\Layer\AvailabilityFlagInterface" type="Magento\Catalog\Model\Layer\Category\AvailabilityFlag" />
+    <virtualType name="Magento\LayeredNavigation\Block\Navigation\Category" type="Magento\LayeredNavigation\Block\Navigation">
+        <arguments>
+            <argument name="filterList" xsi:type="object">categoryFilterList</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\LayeredNavigation\Block\Navigation\Search" type="Magento\LayeredNavigation\Block\Navigation">
+        <arguments>
+            <argument name="filterList" xsi:type="object">searchFilterList</argument>
+        </arguments>
+    </virtualType>
+</config>
+
+

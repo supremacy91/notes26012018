@@ -1,0 +1,62 @@
+создаем кастомный аттрибут с типом multiple_select
+
+<?php
+
+namespace Heb\WaystoshopFilter\Setup;
+
+use Magento\Eav\Setup\EavSetup;
+use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Framework\Setup\InstallDataInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
+
+class InstallData implements InstallDataInterface
+{
+    private $eavSetupFactory;
+
+    public function __construct(EavSetupFactory $eavSetupFactory)
+    {
+        $this->eavSetupFactory = $eavSetupFactory;
+    }
+
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    {
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $eavSetup->addAttribute(
+            \Magento\Catalog\Model\Product::ENTITY,
+            'heb_ways_to_shop',
+            [
+                'group' => 'Product Details',/* Group name in which you want to display your custom attribute */
+                'type' => 'text',/* Data type in which formate your value save in database*/
+                'attribute_set' =>  'Default',
+                'backend' => 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend' : если не указать, то значения через админку сохраняться небудут
+                'frontend' => '',
+                'label' => 'Heb Ways To Shop',
+                'input' => 'multiselect',
+                'class' => '',
+                'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+                'visible' => true,
+                'required' => false,
+                'user_defined' => true,
+                'default' => '',
+                'searchable' => true,
+                'filterable' => true,
+                'comparable' => false,
+                'visible_on_front' => true,
+                'used_in_product_listing' => true,
+                'unique' => false,
+                'visible_in_advanced_search' => false,
+                'filterable_in_search' => false ,
+                'option' => array('values' => array("1", "2","3","4","5","6"))
+            ]
+        );
+    }
+
+}
+
+
+\Magento\Catalog\Model\ResourceModel\Eav\Attribute\Interceptor - обьект EAV аттрибута, который хранит значения из таблиц eav_attribute + catalog_eav_attribute
+На обьекте этого класса можно, например, вызывать метод getIsFilterable() для доступа к полю is_filterable
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+

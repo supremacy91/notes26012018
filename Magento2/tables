@@ -1,0 +1,7 @@
+setup_module - хранит список установленных модулей. Модульи сюда попадают после запуска команды php bin/magento setup:upgrade 
+
+store_website - список вебсайтов
+store_group - список магазинов
+store - список store view
+
+indexer_state - список индексеров
